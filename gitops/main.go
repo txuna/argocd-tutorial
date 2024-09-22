@@ -13,21 +13,21 @@ import (
 func main() {
 	timeSec := 5 * time.Second
 	gitopsRepo := "https://github.com/txuna/argocd-tutorial.git"
-	localPath := "/tmp"
+	localPath := "/tmp/argocd-tutorial"
 	pathToApply := "ch01"
 
 	for {
 		fmt.Println("start repo sync")
 		err := syncRepo(gitopsRepo, localPath)
 		if err != nil {
-			fmt.Println("repo sync error: %s", err)
+			fmt.Printf("repo sync error: %s\n", err)
 			return
 		}
 
 		fmt.Println("start manifest apply")
 		err = applyManifestsClient(path.Join(localPath, pathToApply))
 		if err != nil {
-			fmt.Println("manifest apply error: %s", err)
+			fmt.Printf("manifest apply error: %s\n", err)
 		}
 
 		syncTimer := time.NewTimer(timeSec)
@@ -69,14 +69,9 @@ func syncRepo(repoUrl, localPath string) error {
 }
 
 func applyManifestsClient(localPath string) error {
-	dir, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-
-	cmd := exec.Command("kubectl", "apply", "-f", path.Join(dir, localPath))
+	cmd := exec.Command("kubectl", "apply", "-f", localPath)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	err = cmd.Run()
+	err := cmd.Run()
 	return err
 }

@@ -1,0 +1,16 @@
+# Argo CD는 실제 쿠버네티스 클러스터에 배포하려는 애플리케이션의 인스턴스를 Application이라는 CRD로 구현한다.
+#
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guestbook
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoUrl: https://github.com/argoproj/argocd-example.apps.git
+    targetRevision: HEAD
+    path: guestbook
+destination:
+  server: https://kubernetes.default.svc
+  namespace: guestbook
